@@ -41,13 +41,21 @@ async def on_message(message):
 
         #Help command
         if(message.content == (prefix + "help")):
-            log("Running help command...")
-            await client.send_message(client.get_channel(message.channel.id),'Here\'s some text')
+            log('Running help command...')
+            await client.send_message(client.get_channel(message.channel.id),'The prefix character is currently ' + prefix + ', \nCommand list: \n  ping - pings the bot \n  flipacoin - flips a coin')
 
         #Ping command
         if(message.content == (prefix + "ping")):
-            log("Running ping command...")
+            log('Running ping command...')
             await client.send_message(client.get_channel(message.channel.id), 'Pong!')
+
+        #Flip a coin command
+        if(message.content == (prefix + "flipacoin")):
+            log('Running flipacoin command...')
+            if(random.randint(0,1) == 0):
+                await client.send_message(client.get_channel(message.channel.id), 'It\'s Heads!')
+            else:
+                await client.send_message(client.get_channel(message.channel.id), 'It\'s Tails!')
 
     else:
         #Message is not a command, ignore
