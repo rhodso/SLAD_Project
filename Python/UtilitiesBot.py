@@ -42,7 +42,15 @@ async def on_message(message):
         #Help command
         if(message.content == (prefix + "help")):
             log('Running help command...')
-            await client.send_message(client.get_channel(message.channel.id),'The prefix character is currently ' + prefix + ', \nCommand list: \n  ping - pings the bot \n  flipacoin - flips a coin')
+            await client.send_message(client.get_channel(message.channel.id),'The prefix character is currently ' + prefix + 
+            ', \nCommand list: '+
+            '\n  ping - pings the bot '+
+            '\n  flipacoin - flips a coin'+
+            '\n  whatisthemeaningoflife - tells you the true meaning of life'+
+            '\n  pickrandom - picks a random choice between a list of choices'+
+            '\n    usage: pickrandom|ChoiceA|ChoiceB|...|ChoiceN'+
+            '\n  help - shows this message'
+            )
 
         #Ping command
         if(message.content == (prefix + "ping")):
