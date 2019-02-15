@@ -35,9 +35,11 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if(message == prefix + "help"):
+        log('Running help command...')
         await client.send_message(client.get_channel(message.channel.id), 'Here\'s some text')
 
     elif(message == prefix + "ping"):
+        log('Running ping command...')
         await client.send_message(client.get_channel(message.channel.id), 'Pong!')
 
 #Run bot
