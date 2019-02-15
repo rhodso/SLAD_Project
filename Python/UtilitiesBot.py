@@ -49,6 +49,12 @@ async def on_message(message):
             log('Running ping command...')
             await client.send_message(client.get_channel(message.channel.id), 'Pong!')
 
+        #What is the meaning of life command
+        if(message.content == (prefix + "whatisthemeaningoflife")):
+            log('Running meaningofLife command....')
+            await client.send_message(client.get_channel(message.channel.id), 'The meaning of life is... ')
+            await client.send_message(client.get_channel(message.channel.id), '42')
+
         #Flip a coin command
         if(message.content == (prefix + "flipacoin")):
             log('Running flipacoin command...')
@@ -56,6 +62,13 @@ async def on_message(message):
                 await client.send_message(client.get_channel(message.channel.id), 'It\'s Heads!')
             else:
                 await client.send_message(client.get_channel(message.channel.id), 'It\'s Tails!')
+
+        #PickRandom command
+        if(message.content[:11] == (prefix + "pickrandom")):
+            log('Running pickrandom command....')
+            choices = message.content.split('|')
+            choice = random.randint(1,len(choices)-1)
+            await client.send_message(client.get_channel(message.channel.id), 'Hmm, I choose ' + choices[choice])
 
     else:
         #Message is not a command, ignore
