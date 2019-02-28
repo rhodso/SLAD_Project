@@ -2,14 +2,19 @@ import java.io.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+
 public class UtilitiesBot {
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    DiscordApi api = null;
     public UtilitiesBot(){
+        super();
         
     }
     //Launcher calls constructor then start()
     void start(String token){
         log("Starting bot...");
+        api = new DiscordApiBuilder().setToken(token).login.join();
+        
     }
     void log(String msg){
         String strDate = sdfDate.format(new Date());
