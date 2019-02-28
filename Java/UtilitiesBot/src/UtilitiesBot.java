@@ -4,10 +4,8 @@ import java.io.FileReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javacord.org.javacord.api.DiscordApiBuilder;
-
-import javacord.org.javacord.api.DiscordApi;
-
+import org.javacord.api.DiscordApi;
+import org.javacord.api.DiscordApiBuilder;
 
 public class UtilitiesBot {
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -15,15 +13,18 @@ public class UtilitiesBot {
     DiscordApi api = null;
     public UtilitiesBot(){
         super();
-
-    }
+    } 
     //Launcher calls constructor then start()
     void start(String token){
         log("Starting bot...");
-        apiBuilder = new DiscordApiBuilder();
-        apiBuilder.setToken(token);
-        api = apiBuilder.login().join();
-        
+            if(!token.equals(null)){
+            apiBuilder = new DiscordApiBuilder();
+            apiBuilder.setToken(token);
+            api = apiBuilder.login().join();
+        }
+        else{
+            log("Token not found!");
+        }
     }
     void log(String msg){
         String strDate = sdfDate.format(new Date());
