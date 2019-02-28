@@ -7,8 +7,6 @@ import java.util.Date;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
-import commands.pingCommand;
-
 public class UtilitiesBot {
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     DiscordApiBuilder apiBuilder = null;
@@ -24,7 +22,7 @@ public class UtilitiesBot {
             apiBuilder.setToken(token);
             api = apiBuilder.login().join();
 
-            api.addMessageCreateListener(new pingCommand());
+            api.addMessageCreateListener(new commands("!"));
         }
         else{
             log("Token not found!");
