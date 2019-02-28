@@ -1,3 +1,5 @@
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -46,9 +48,19 @@ public class commands implements MessageCreateListener {
 
         // Maths command
         else if (messageStrings[0].equals(prefix + "domaths")) {
-            PyObject res = interpreter.eval(messageStrings[1]);
-            String result = res.asString();
-            event.getChannel().sendMessage(result);
+            try {
+                Process p = Runtime.getRuntime().exec("python3 maths.py " + messageStrings[1]);
+                InputStream result = p.getInputStream();
+                byte[] b = result.readAllBytes();
+                String str = new String(b, "UTF-8");
+                
+                System.out.println(str);
+
+                event.getChannel().sendMessage(str);
+            }
+            catch(IOException ex){
+                event.getChannel().sendMessage("An IOException occured");
+            }
         }
         else{}
     }
