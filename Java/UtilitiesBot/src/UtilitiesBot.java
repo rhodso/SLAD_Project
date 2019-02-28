@@ -1,19 +1,28 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javacord.org.javacord.api.DiscordApiBuilder;
+
+import javacord.org.javacord.api.DiscordApi;
 
 
 public class UtilitiesBot {
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    DiscordApiBuilder apiBuilder = null;
     DiscordApi api = null;
     public UtilitiesBot(){
         super();
-        
+
     }
     //Launcher calls constructor then start()
     void start(String token){
         log("Starting bot...");
-        api = new DiscordApiBuilder().setToken(token).login.join();
+        apiBuilder = new DiscordApiBuilder();
+        apiBuilder.setToken(token);
+        api = apiBuilder.login().join();
         
     }
     void log(String msg){

@@ -1,4 +1,6 @@
 public class launcher{
+    public launcher(){super();}
+
     public static void main(String[] args){
         UtilitiesBot ub = new UtilitiesBot();
         String token = ub.getToken();
