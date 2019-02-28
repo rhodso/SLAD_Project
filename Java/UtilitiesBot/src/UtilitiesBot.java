@@ -7,6 +7,8 @@ import java.util.Date;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
+import commands.pingCommand;
+
 public class UtilitiesBot {
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     DiscordApiBuilder apiBuilder = null;
@@ -17,14 +19,17 @@ public class UtilitiesBot {
     //Launcher calls constructor then start()
     void start(String token){
         log("Starting bot...");
-            if(!token.equals(null)){
+        if(!token.equals(null)){
             apiBuilder = new DiscordApiBuilder();
             apiBuilder.setToken(token);
             api = apiBuilder.login().join();
+
+            api.addMessageCreateListener(new pingCommand());
         }
         else{
             log("Token not found!");
         }
+        log("Bot ready!");
     }
     void log(String msg){
         String strDate = sdfDate.format(new Date());
