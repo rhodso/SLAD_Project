@@ -1,3 +1,4 @@
 import sys
-str = sys.argv[1]
-print(eval(str))
+out = sys.argv[1]
+#f = open('res.txt','w')
+print(str(eval(out)))

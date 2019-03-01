@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Random;
 
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -49,17 +51,27 @@ public class commands implements MessageCreateListener {
         // Maths command
         else if (messageStrings[0].equals(prefix + "domaths")) {
             try {
-                Process p = Runtime.getRuntime().exec("python3 maths.py " + messageStrings[1]);
-                InputStream result = p.getInputStream();
-                byte[] b = result.readAllBytes();
-                String str = new String(b, "UTF-8");
+                //Command to execute python script
+                String cmd = "python3 /home/rhodso/Documents/GitHub/SLAD_Project/Java/UtilitiesBot/maths.py " + messageStrings[1];
+                Process p = Runtime.getRuntime().exec(cmd);
                 
-                System.out.println(str);
+                //Grab the return string
+                String str = "";
+                str = new String(p.getInputStream().readAllBytes());
 
+                //Catch if there was no output
+                if(str.equals(null) || str.equals("")){
+                    str = "Unable to parse expression. Did you type it correctly?";
+                }
+
+                //Send answer or error message
                 event.getChannel().sendMessage(str);
             }
             catch(IOException ex){
                 event.getChannel().sendMessage("An IOException occured");
+                System.out.println(ex.getCause());
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getStackTrace().toString());
             }
         }
         else{}
