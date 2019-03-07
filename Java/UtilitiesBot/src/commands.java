@@ -26,6 +26,11 @@ public class commands implements MessageCreateListener {
             event.getChannel().sendMessage("Pong!");
         }
 
+        //Help Command
+        else if(messageStrings[0].equals(prefix + "help")){
+            event.getChannel().sendMessage("The prefix command is currently '" + prefix + "', you can use this to issue commands to me\nThe 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\nThe 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\nThe 'pickrandom' command is used to pick a random value from a list of values, usage is as follows:\n\t!pickrandom|val1|val2|val3...\nThe 'domaths' command is used to perform some basic maths operations, you can use it like this\n\t!domaths|[Expression]");
+        }
+
         // Flip a coin
         else if (messageStrings[0].equals(prefix + "flipacoin")) {
             if (rng.nextInt(2) == 0) {
