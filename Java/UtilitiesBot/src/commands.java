@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.Random;
 
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
@@ -16,11 +15,20 @@ public class commands implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
+        
+        String helpText = "The prefix for commands is currently '" + prefix +
+        "', you can use this to issue commands to me\n" + 
+        "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n" + 
+        "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n" + 
+        "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\t!pickrandom|val1|val2|val3...\n " + 
+        "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\t!domaths|[Expression]" + 
+        "";
 
         String[] messageStrings = event.getMessageContent().split("\\|");
         messageStrings[0] = messageStrings[0].toLowerCase();
 
         User me = event.getApi().getYourself();
+        User author = event.getMessageAuthor().asUser().get();
 
         // Ping command
         if (messageStrings[0].equals(prefix + "ping")) {
@@ -29,26 +37,12 @@ public class commands implements MessageCreateListener {
 
         //Help Command (Using mention)
         else if(messageStrings[0].equals(me.getMentionTag() + " help")){
-            event.getChannel().sendMessage("The prefix command is currently '" + prefix +
-            "', you can use this to issue commands to me\n" + 
-            "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n" + 
-            "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n" + 
-            "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\t!pickrandom|val1|val2|val3...\n " + 
-            "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\t!domaths|[Expression]" + 
-            ""
-            );
+            event.getChannel().sendMessage(helpText);
         }
 
         //Help Command (Using prefix)
         else if(messageStrings[0].equals(prefix + "help")){
-            event.getChannel().sendMessage("The prefix command is currently '" + prefix +
-            "', you can use this to issue commands to me\n" + 
-            "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n" + 
-            "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n" + 
-            "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\t!pickrandom|val1|val2|val3...\n " + 
-            "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\t!domaths|[Expression]" + 
-            ""
-            );
+            event.getChannel().sendMessage(helpText);
         }
 
         // Flip a coin
