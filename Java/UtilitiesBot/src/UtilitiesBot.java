@@ -34,6 +34,10 @@ public class UtilitiesBot {
         System.out.println(strDate + "\t" + msg);
     }
 
+    DiscordApi getApi(){
+        return api;
+    }
+
     String getToken(){
         try{
             BufferedReader br = new BufferedReader(new FileReader(new File("token.txt")));
