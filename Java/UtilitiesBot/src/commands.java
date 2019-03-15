@@ -29,8 +29,10 @@ public class commands implements MessageCreateListener {
         "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n" + 
         "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n" + 
         "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n" + 
-        "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\t!pickrandom|val1|val2|val3...\n " + 
-        "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\t!domaths|[Expression]" + 
+        "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\tpickrandom|[val1]|[val2]|[val3]...\n " + 
+        "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\tdomaths|[Expression]" + 
+        "The 'changeprefix' command is used to change the prefix. It can only be used by an administrator or moderator, usage is as follows:"+ "\n\tchangeprefix|[prefix]\n" +
+        "The 'makemod' command is used to make a user a moderator. It can only be used by an administrator, this is how you use it:" + "\n\tmakemod|[user]" + 
         "";
 
         String[] messageStrings = event.getMessageContent().split("\\|");
@@ -147,6 +149,47 @@ public class commands implements MessageCreateListener {
 
         else if(messageStrings[0].equals(prefix + "changeAvatar")){
             //TODO: Allow only the bot owner (rhodso) to change the avatar. See https://docs.javacord.org/api/v/3.0.3/org/javacord/api/entity/user/User.html#isBotOwner--
+        }
+
+        else if(messageStrings[0].equals(prefix + "makemod")){
+            boolean isAdmin = false;
+            List<Role> adminRoleArray = null;
+            List<Role> authorRoles = null;
+            List<Role> modRoleArray = null;
+            
+            try{
+                adminRoleArray = server.getRolesByName("Admin");
+                authorRoles = author.getRoles(server);
+                modRoleArray = server.getRolesByName("Mod");
+
+                for(Role r : adminRoleArray){
+                    if(authorRoles.contains(r)){
+                        isAdmin = true;
+                    }
+                }
+
+                if(!event.getMessage().mentionsEveryone()){
+                if(isAdmin){
+                    List<User> users = event.getMessage().getMentionedUsers();
+                    for(User u : users){
+                        for(Role r : modRoleArray){
+                            u.addRole(r);
+                        }
+                    }
+                    event.getChannel().sendMessage("Gave 'Mod' role to all users mentioned in message");
+                }
+                else{
+                    event.getChannel().sendMessage("You need to be an Admin to access this command");
+                }
+            }
+            else{
+                event.getChannel().sendMessage("Cannot make everyone a moderator!");
+            }
+            }
+            catch(Exception ex){
+
+            }
+
         }
 
         else{}
