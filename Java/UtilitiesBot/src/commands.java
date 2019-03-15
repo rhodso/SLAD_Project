@@ -1,9 +1,18 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.entity.permission.*;
+import org.javacord.api.entity.server.Server;
 
 public class commands implements MessageCreateListener {
     private String prefix;
@@ -16,8 +25,8 @@ public class commands implements MessageCreateListener {
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
         
-        String helpText = "The prefix for commands is currently '" + prefix +
-        "', you can use this to issue commands to me\n" + 
+        String helpText = "The prefix for commands is currently '" + prefix + "', you can use this to issue commands to me\n" +
+        "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n" + 
         "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n" + 
         "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n" + 
         "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: " + "\n\t!pickrandom|val1|val2|val3...\n " + 
@@ -29,6 +38,7 @@ public class commands implements MessageCreateListener {
 
         User me = event.getApi().getYourself();
         User author = event.getMessageAuthor().asUser().get();
+        Server server = event.getServer().get();
 
         // Ping command
         if (messageStrings[0].equals(prefix + "ping")) {
@@ -94,9 +104,45 @@ public class commands implements MessageCreateListener {
             }
         }
 
-        else if(messageStrings[0].equals(prefix + "changePrefix")){
-            //TODO: Allow Admins / Mods to change the prefix. Could read from file? See https://docs.javacord.org/api/v/3.0.3/org/javacord/api/entity/user/User.html#getRoles-org.javacord.api.entity.server.Server-
+        else if(messageStrings[0].equals(prefix + "changeprefix")){
+            String newPrefix = "";
+            List<Role> adminRoleArray = null;
+            List<Role> modRoleArray = null;
+            List<Role> authorRoles = null;
 
+            Boolean isAdminOrMod = false;
+
+            try{
+                adminRoleArray = server.getRolesByName("Admin");
+                modRoleArray = server.getRolesByName("Mod");
+                authorRoles = author.getRoles(server);
+
+                newPrefix = messageStrings[1];
+
+                for(Role r : modRoleArray){
+                    if(authorRoles.contains(r)){
+                        isAdminOrMod = true;
+                    }
+                }
+
+                for(Role r : adminRoleArray){
+                    if(authorRoles.contains(r)){
+                        isAdminOrMod = true;
+                    }
+                }
+
+                if(isAdminOrMod){
+                    setPrefix(newPrefix);
+                    prefix = getPrefix();
+                    event.getChannel().sendMessage("Prefix changed to '" + prefix + "'");
+                }
+                else{
+                    event.getChannel().sendMessage("You need to be an Admin or a Mod to access this command");
+                }
+            }
+            catch(Exception ex){
+                event.getChannel().sendMessage("An exception occured! Prefix may not have been changed");
+            }
         }
 
         else if(messageStrings[0].equals(prefix + "changeAvatar")){
@@ -104,5 +150,57 @@ public class commands implements MessageCreateListener {
         }
 
         else{}
+    }
+
+    String getPrefix() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(new File("prefix.txt")));
+            String t = br.readLine();
+            br.close();
+            return t;
+        } catch (Exception ex) {
+            
+            return null;
+        }
+    }
+
+    boolean setPrefix(String newPrefix) {
+        BufferedWriter bw = null;
+        try {
+            File f = new File("prefix.txt");
+            if (f.exists()) {
+                f.delete();
+            }
+            f.createNewFile();
+            
+            try {
+                FileWriter fw = new FileWriter(f);
+                
+                for(int i = 0; i < newPrefix.length(); i++)
+                {
+                    fw.write((int)newPrefix.charAt(i));
+                }
+                
+                fw.close();
+                return true;
+            }
+            catch (IOException e) {
+                System.out.println(e.toString());
+                return false;
+            }
+
+            
+        } catch (Exception ex) {
+            
+            return false;
+        } finally {
+            if (bw != null) {
+                try {
+                    bw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -26,8 +26,6 @@ public class UtilitiesBot {
             apiBuilder = new DiscordApiBuilder();
             apiBuilder.setToken(token);
             api = apiBuilder.login().join();
-
-            setPrefix(".");
             String prefix = getPrefix();
             if (prefix == null || prefix.equals(null) || prefix.equals("")) {
                 log("Prefix not found. Defaulting to use '!'");
