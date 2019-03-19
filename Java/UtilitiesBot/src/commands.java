@@ -16,17 +16,22 @@ import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.listener.message.MessageCreateListener;
 
 public class commands implements MessageCreateListener {
+    //Vars
     private String prefix;
     private Random rng = new Random();
     SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
+    //Constructor
     public commands(String prefix) {
         this.prefix = prefix;
     }
 
-    @Override
-    public void onMessageCreate(MessageCreateEvent event) {
+    //The big boi method. Gets called every time a message is sent
+    //We need to read the message and see if it's a command, and act occordingly
 
+    @Override 
+    public void onMessageCreate(MessageCreateEvent event) {
+        //Help text for help commands
         String helpText = "The prefix for commands is currently '" + prefix
                 + "', you can use this to issue commands to me\n"
                 + "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n"
@@ -40,9 +45,11 @@ public class commands implements MessageCreateListener {
                 + "The 'makemod' command is used to make a user a moderator. It can only be used by an administrator, this is how you use it:"
                 + "\n\tmakemod|[user]" + "";
 
+        //Split the message up. Commands and args are pipe ('|') delimited
         String[] messageStrings = event.getMessageContent().split("\\|");
         messageStrings[0] = messageStrings[0].toLowerCase();
 
+        //Create some useful variables
         User me = event.getApi().getYourself();
         User author = event.getMessageAuthor().asUser().get();
         Server server = event.getServer().get();
@@ -68,23 +75,25 @@ public class commands implements MessageCreateListener {
         // Flip a coin
         else if (messageStrings[0].equals(prefix + "flipacoin")) {
             log("Running flipacoin command");
-            if (rng.nextInt(2) == 0) {
+            if (rng.nextInt(2) == 0) { //Gets a 1 or 0, 0 is heads, 1 is tails
                 event.getChannel().sendMessage("Heads");
             } else {
                 event.getChannel().sendMessage("Tails");
             }
         }
 
-        // Meaning of life command
+        // Meaning of life command (Fun command)
         else if (messageStrings[0].equals(prefix + "whatisthemeaningoflife")) {
             log("Running whatisthemeaningoflife command");
             event.getChannel().sendMessage("The meaning of life is...");
             event.getChannel().sendMessage("42");
+            //Totally not a douglas adams reference
         }
 
         // PickRandom
         else if (messageStrings[0].equals(prefix + "pickrandom")) {
             log("Running pickrandom command");
+            //Get the number of arguments, select a random one, send that back
             int selection = rng.nextInt(messageStrings.length - 1);
             selection++;
             event.getChannel().sendMessage("Selected: " + messageStrings[selection]);
@@ -122,6 +131,8 @@ public class commands implements MessageCreateListener {
 
         else if (messageStrings[0].equals(prefix + "changeprefix")) {
             log("Running changeprefix command");
+
+            //Some useful vars
             String newPrefix = "";
             List<Role> adminRoleArray = null;
             List<Role> modRoleArray = null;
@@ -130,48 +141,54 @@ public class commands implements MessageCreateListener {
             Boolean isAdminOrMod = false;
 
             try {
+                //Get the admin, mod, and the roles the message author has
                 adminRoleArray = server.getRolesByName("Admin");
                 modRoleArray = server.getRolesByName("Mod");
                 authorRoles = author.getRoles(server);
 
+                //Get the new prefix
                 newPrefix = messageStrings[1];
 
+                //Go through all the roles called mod, see if the author has it
                 for (Role r : modRoleArray) {
                     if (authorRoles.contains(r)) {
                         isAdminOrMod = true;
                     }
                 }
 
+                //Go through all the roles called admin, see if the author has it
                 for (Role r : adminRoleArray) {
                     if (authorRoles.contains(r)) {
                         isAdminOrMod = true;
                     }
                 }
 
-                if (isAdminOrMod) {
+                if (isAdminOrMod) { //If they're an admin or mod, change thee prefix, and update 'prefix.txt'
                     setPrefix(newPrefix);
                     prefix = getPrefix();
                     event.getChannel().sendMessage("Prefix changed to '" + prefix + "'");
                     log("Prefix changed to " + prefix);
-                } else {
+                } else { //Tell the user that thay don't have the permissions
                     event.getChannel().sendMessage("You need to be an Admin or a Mod to access this command");
                 }
-            } catch (Exception ex) {
+            } catch (Exception ex) { //In case it goes wrong
                 event.getChannel().sendMessage("An exception occured! Prefix may not have been changed");
             }
         }
 
-        else if (messageStrings[0].equals(prefix + "changeAvatar")) {
-            if (!event.getMessage().getAuthor().isBotOwner()) {
+        //Change the bot's avatar
+        else if (messageStrings[0].equals(prefix + "changeAvatar")) { 
+            if (!event.getMessage().getAuthor().isBotOwner()) { //Tell the user they need to be the bot's owner
                 event.getChannel().sendMessage("You must be the bot's owner to use this command");
                 
             }
-            else{
+            else{ //Copy the owner's avatar
                 event.getApi().updateAvatar(event.getMessage().getAuthor().getAvatar());
                 event.getChannel().sendMessage("Updated avatar");
             }
         }
 
+        //Makes user a mod
         else if (messageStrings[0].equals(prefix + "makemod")) {
             log("Running makemod command");
             boolean isAdmin = false;
@@ -179,17 +196,19 @@ public class commands implements MessageCreateListener {
             List<Role> authorRoles = null;
             List<Role> modRoleArray = null;
 
-            try {
+            try { //Get the admin role, author roles, and the mod role
                 adminRoleArray = server.getRolesByName("Admin");
                 authorRoles = author.getRoles(server);
                 modRoleArray = server.getRolesByName("Mod");
 
+                //See if the user is an admin
                 for (Role r : adminRoleArray) {
                     if (authorRoles.contains(r)) {
                         isAdmin = true;
                     }
                 }
 
+                //Make sure the author hasn't menioned everyone
                 if (!event.getMessage().mentionsEveryone()) {
                     if (isAdmin) {
                         List<User> users = event.getMessage().getMentionedUsers();
