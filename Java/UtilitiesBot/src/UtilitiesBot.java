@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,7 +23,11 @@ public class UtilitiesBot {
     // Launcher calls constructor then start()
     void start(String token) {
         log("Starting bot...");
-        if (!token.equals(null)) {
+        
+        if(token.equals("TOKEN NOT FOUND")){
+            log("The token file was not found. Please insert the token in the file 'token.txt'");
+        }
+        else if (!token.equals(null)) {
             apiBuilder = new DiscordApiBuilder();
             apiBuilder.setToken(token);
             api = apiBuilder.login().join();
@@ -32,7 +37,8 @@ public class UtilitiesBot {
                 prefix = "!";
             }
             api.addMessageCreateListener(new commands(prefix));
-        } else {
+        }
+        else {
             log("Token not found!");
         }
         log("Bot ready!");
@@ -49,7 +55,13 @@ public class UtilitiesBot {
 
     String getToken() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader(new File("token.txt")));
+            File f = new File("token.txt");
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            if(!f.exists()){
+                f.createNewFile();
+                br.close();
+                return "TOKEN NOT FOUND";
+            }
             String t = br.readLine();
             br.close();
             return t;
@@ -60,9 +72,10 @@ public class UtilitiesBot {
     }
 
     String getPrefix() {
+        String t = null;
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File("prefix.txt")));
-            String t = br.readLine();
+            t = br.readLine();
             br.close();
             return t;
         } catch (Exception ex) {
