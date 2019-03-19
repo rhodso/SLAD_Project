@@ -47,6 +47,9 @@ public class UtilitiesBot {
 
             //Add the commands
             api.addMessageCreateListener(new commands(prefix));
+
+            //Add the server join listener
+            api.addListener(new ServerJoinListener());
         }
         //Some sort of error happened, don't start the bot
         else {
