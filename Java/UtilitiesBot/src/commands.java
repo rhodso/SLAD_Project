@@ -212,6 +212,7 @@ public class commands implements MessageCreateListener {
         }
 
         else {
+            //TODO: Spam detection
         }
     }
 
