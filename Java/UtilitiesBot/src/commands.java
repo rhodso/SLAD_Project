@@ -40,8 +40,8 @@ public class commands implements MessageCreateListener {
     + "";
 
     // Constructor
-    public commands(String prefix) {
-        this.prefix = prefix;
+    public commands(String newPrefix) {
+        prefix = newPrefix;
     }
 
     public commands(){}
@@ -312,7 +312,6 @@ public class commands implements MessageCreateListener {
         }
 
         else {
-            // TODO: Spam detection
         }
     }
 

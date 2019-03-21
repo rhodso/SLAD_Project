@@ -6,11 +6,13 @@ public class ServerJoinListener implements ServerMemberJoinListener {
 
     @Override
     public void onServerMemberJoin(ServerMemberJoinEvent event){
-        commands c = new commands();
+
+        /*
         User newUser = event.getUser();
         newUser.openPrivateChannel();
         newUser.getPrivateChannel().get().sendMessage("Hi there, it seems you've joined" + event.getServer().getName());
-        newUser.getPrivateChannel().get().sendMessage(c.helpText);
+        newUser.getPrivateChannel().get().sendMessage(commands.helpText);
+        */
 
     }
     
