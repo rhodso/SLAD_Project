@@ -24,20 +24,20 @@ public class commands implements MessageCreateListener {
 
     // Help text for help commands
     static String helpText = "The prefix for commands is currently '" + getPrefix()
-    + "', you can use this to issue commands to me\n"
-    + "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n"
-    + "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n"
-    + "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n"
-    + "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: "
-    + "\n\tpickrandom|[val1]|[val2]|[val3]...\n "
-    + "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\tdomaths|[Expression]"
-    + "The 'changeprefix' command is used to change the prefix. It can only be used by an administrator or moderator, usage is as follows:"
-    + "\n\tchangeprefix|[prefix]\n"
-    + "The 'makemod' command is used to make a user a moderator. It can only be used by an administrator, this is how you use it:"
-    + "\n\tmakemod|[user]" 
-    + "\nThe 'silence' command is used to make me silenced. This will stop me responding to all commands, except silence and unsilence. It can only be used by an admin"
-    + "\nThe 'unsilence' command is used to make me unsilenced. This will allow me to respond to all commands, except silence and unsilence. It can only be used by an admin"
-    + "";
+            + "', you can use this to issue commands to me\n"
+            + "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n"
+            + "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n"
+            + "The 'flipacoin' command is used to flip a coin, I will flip a coin and reply 'heads' or 'tails'\n"
+            + "The 'pickrandom' command is used to pick a random value from a list of values, usage is as follows: "
+            + "\n\tpickrandom|[val1]|[val2]|[val3]...\n "
+            + "The 'domaths' command is used to perform some basic maths operations, you can use it like this\n\tdomaths|[Expression]"
+            + "The 'changeprefix' command is used to change the prefix. It can only be used by an administrator or moderator, usage is as follows:"
+            + "\n\tchangeprefix|[prefix]\n"
+            + "The 'makemod' command is used to make a user a moderator. It can only be used by an administrator, this is how you use it:"
+            + "\n\tmakemod|[user]"
+            + "\nThe 'silence' command is used to make me silenced. This will stop me responding to all commands, except silence and unsilence. It can only be used by an admin"
+            + "\nThe 'unsilence' command is used to make me unsilenced. This will allow me to respond to all commands, except silence and unsilence. It can only be used by an admin"
+            + "";
 
     // Constructor
     public commands(String newPrefix) {
@@ -49,8 +49,7 @@ public class commands implements MessageCreateListener {
 
     @Override
     public void onMessageCreate(MessageCreateEvent event) {
-        
-
+        prefix = getPrefix();
 
         // Split the message up. Commands and args are pipe ('|') delimited
         String[] messageStrings = event.getMessageContent().split("\\|");
@@ -61,6 +60,7 @@ public class commands implements MessageCreateListener {
         User author = event.getMessageAuthor().asUser().get();
         Server server = event.getServer().get();
 
+        // Silence the bot command
         if (messageStrings[0].equals(prefix + "silence")) {
             boolean isAdmin = false;
             List<Role> adminRoleArray = null;
@@ -77,11 +77,10 @@ public class commands implements MessageCreateListener {
                     }
                 }
 
-                if(isAdmin){
+                if (isAdmin) {
                     silenced = true;
                     event.getChannel().sendMessage("Bot silenced");
-                }
-                else{
+                } else {
                     event.getChannel().sendMessage("You must be an admin to use this command");
                 }
 
@@ -90,6 +89,8 @@ public class commands implements MessageCreateListener {
             }
 
         }
+
+        // Unsilence the bot command
         if (messageStrings[0].equals(prefix + "unsilence")) {
             boolean isAdmin = false;
             List<Role> adminRoleArray = null;
@@ -106,11 +107,10 @@ public class commands implements MessageCreateListener {
                     }
                 }
 
-                if(isAdmin){
+                if (isAdmin) {
                     silenced = false;
                     event.getChannel().sendMessage("Bot unsilenced");
-                }
-                else{
+                } else {
                     event.getChannel().sendMessage("You must be an admin to use this command");
                 }
 
@@ -119,6 +119,7 @@ public class commands implements MessageCreateListener {
             }
         }
 
+        // If the bot is silenced, don't do anything, if it isn't, process commands
         if (!silenced) {
 
             // Ping command
@@ -208,6 +209,7 @@ public class commands implements MessageCreateListener {
                 }
             }
 
+            // Change prefix command
             else if (messageStrings[0].equals(prefix + "changeprefix")) {
                 log("Running changeprefix command");
 
@@ -313,27 +315,35 @@ public class commands implements MessageCreateListener {
         }
     }
 
+    // Get the prefix from the file
     static String getPrefix() {
         try {
+            // Create a buffered reader to read the file
             BufferedReader br = new BufferedReader(new FileReader(new File("prefix.txt")));
+
+            // Read the line, then close the reader
             String t = br.readLine();
             br.close();
             return t;
         } catch (Exception ex) {
-
             return null;
         }
     }
 
+    // Set the prefix in the file
     static boolean setPrefix(String newPrefix) {
         BufferedWriter bw = null;
         try {
+            // See if the file exitis. If it does, then delete it
             File f = new File("prefix.txt");
             if (f.exists()) {
                 f.delete();
             }
+
+            // Create the file
             f.createNewFile();
 
+            // Write the prefix to the file
             try {
                 FileWriter fw = new FileWriter(f);
 
@@ -341,6 +351,7 @@ public class commands implements MessageCreateListener {
                     fw.write((int) newPrefix.charAt(i));
                 }
 
+                // Close the file reader, and return true
                 fw.close();
                 return true;
             } catch (IOException e) {
@@ -348,10 +359,12 @@ public class commands implements MessageCreateListener {
                 return false;
             }
 
+            // Catch the exception
         } catch (Exception ex) {
 
             return false;
         } finally {
+            // Try and close the buffered writer
             if (bw != null) {
                 try {
                     bw.close();
@@ -362,6 +375,7 @@ public class commands implements MessageCreateListener {
         }
     }
 
+    // Log something
     void log(String msg) {
         String strDate = sdfDate.format(new Date());
         System.out.println(strDate + "\t" + msg);
