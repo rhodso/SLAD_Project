@@ -23,7 +23,7 @@ public class commands implements MessageCreateListener {
     private boolean silenced = false;
 
     // Help text for help commands
-    static String helpText = "The prefix for commands is currently '" + prefix
+    static String helpText = "The prefix for commands is currently '" + getPrefix()
     + "', you can use this to issue commands to me\n"
     + "The 'help' command shows this text. You can also mention me, like such '@UtilitiesBot help'\n"
     + "The 'ping' command makes me say 'Pong!', this is mainly used to make sure I am working fine\n"
@@ -43,8 +43,6 @@ public class commands implements MessageCreateListener {
     public commands(String newPrefix) {
         prefix = newPrefix;
     }
-
-    public commands(){}
 
     // The big boi method. Gets called every time a message is sent
     // We need to read the message and see if it's a command, and act occordingly
@@ -315,7 +313,7 @@ public class commands implements MessageCreateListener {
         }
     }
 
-    String getPrefix() {
+    static String getPrefix() {
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File("prefix.txt")));
             String t = br.readLine();
@@ -327,7 +325,7 @@ public class commands implements MessageCreateListener {
         }
     }
 
-    boolean setPrefix(String newPrefix) {
+    static boolean setPrefix(String newPrefix) {
         BufferedWriter bw = null;
         try {
             File f = new File("prefix.txt");
