@@ -54,6 +54,7 @@ public class commands implements MessageCreateListener {
         // Split the message up. Commands and args are pipe ('|') delimited
         String[] messageStrings = event.getMessageContent().split("\\|");
         messageStrings[0] = messageStrings[0].toLowerCase();
+        messageStrings[0] = messageStrings[0].replace(" ","");
 
         // Create some useful variables
         User me = event.getApi().getYourself();
@@ -156,8 +157,11 @@ public class commands implements MessageCreateListener {
                 event.getChannel().sendMessage("Probably 0");
             }
 
+            // Google command
             else if (messageStrings[0].equals(prefix + "google")) {
                 log("Running google command");
+                //Replace spaces with '+' because that's how google does spaces
+                messageStrings[1] = messageStrings[1].replace(" ", "+");
                 log("Query = " + messageStrings[1]);
                 event.getChannel().sendMessage("http://www.google.com/search?q=" + messageStrings[1]);
             }
@@ -254,17 +258,6 @@ public class commands implements MessageCreateListener {
                     }
                 } catch (Exception ex) { // In case it goes wrong
                     event.getChannel().sendMessage("An exception occured! Prefix may not have been changed");
-                }
-            }
-
-            // Change the bot's avatar
-            else if (messageStrings[0].equals(prefix + "changeAvatar")) {
-                if (!event.getMessage().getAuthor().isBotOwner()) { // Tell the user they need to be the bot's owner
-                    event.getChannel().sendMessage("You must be the bot's owner to use this command");
-
-                } else { // Copy the owner's avatar
-                    event.getApi().updateAvatar(event.getMessage().getAuthor().getAvatar());
-                    event.getChannel().sendMessage("Updated avatar");
                 }
             }
 
