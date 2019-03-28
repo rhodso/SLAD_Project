@@ -144,167 +144,166 @@ public class commands implements MessageCreateListener {
             // Flip a coin
             else if (messageStrings[0].equals(prefix + "flipacoin")) {
                 log("Running flipacoin command");
-                if (rng.nextInt(2) == 0) { // Gets a 1 or 0, 0 is heads, 1 is tails
+                int flip = rng.nextInt(100);
+                if (flip < 50) { // Gets a 1 or 0, 0 is heads, 1 is tails
                     event.getChannel().sendMessage("Heads");
-                } else {
+                } else if (flip > 50)
                     event.getChannel().sendMessage("Tails");
-                }
-            }
-
-            // government screw up command
-            else if (messageStrings[0].equals(prefix + "dayssincelastgovernmentscrewup")) {
-                log("Running government screwup command");
-                event.getChannel().sendMessage("Probably 0");
-            }
-
-            // Google command
-            else if (messageStrings[0].equals(prefix + "google")) {
-                log("Running google command");
-                // Replace spaces with '+' because that's how google does spaces
-                messageStrings[1] = messageStrings[1].replace(" ", "+");
-                log("Query = " + messageStrings[1]);
-                event.getChannel().sendMessage("http://www.google.com/search?q=" + messageStrings[1]);
-            }
-
-            // Meaning of life command (Fun command)
-            else if (messageStrings[0].equals(prefix + "whatisthemeaningoflife")) {
-                log("Running whatisthemeaningoflife command");
-                event.getChannel().sendMessage("The meaning of life is...");
-                event.getChannel().sendMessage("42");
-                // Totally not a douglas adams reference
-            }
-
-            // PickRandom
-            else if (messageStrings[0].equals(prefix + "pickrandom")) {
-                log("Running pickrandom command");
-                // Get the number of arguments, select a random one, send that back
-                int selection = rng.nextInt(messageStrings.length - 1);
-                selection++;
-                event.getChannel().sendMessage("Selected: " + messageStrings[selection]);
-            }
-
-            // Maths command
-            else if (messageStrings[0].equals(prefix + "domaths")) {
-                log("Running domaths command");
-                log("Expression = " + messageStrings[1]);
-                try {
-                    // Command to execute python script
-                    String cmd = "python3 /home/rhodso/Documents/GitHub/SLAD_Project/Java/UtilitiesBot/maths.py "
-                            + messageStrings[1];
-                    Process p = Runtime.getRuntime().exec(cmd);
-
-                    // Grab the return string
-                    String str = "";
-                    str = new String(p.getInputStream().readAllBytes());
-
-                    // Catch if there was no output
-                    if (str.equals(null) || str.equals("")) {
-                        str = "Unable to parse expression. Did you type it correctly?";
-                    }
-
-                    // Send answer or error message
-                    log("Answer = " + str);
-                    event.getChannel().sendMessage(str);
-                } catch (IOException ex) {
-                    event.getChannel().sendMessage("An IOException occured");
-                    System.out.println(ex.getCause());
-                    System.out.println(ex.getMessage());
-                    System.out.println(ex.getStackTrace().toString());
-                }
-            }
-
-            // Change prefix command
-            else if (messageStrings[0].equals(prefix + "changeprefix")) {
-                log("Running changeprefix command");
-
-                // Some useful vars
-                String newPrefix = "";
-                List<Role> adminRoleArray = null;
-                List<Role> modRoleArray = null;
-                List<Role> authorRoles = null;
-
-                Boolean isAdminOrMod = false;
-
-                try {
-                    // Get the admin, mod, and the roles the message author has
-                    adminRoleArray = server.getRolesByName("Admin");
-                    modRoleArray = server.getRolesByName("Mod");
-                    authorRoles = author.getRoles(server);
-
-                    // Get the new prefix
-                    newPrefix = messageStrings[1];
-
-                    // Go through all the roles called mod, see if the author has it
-                    for (Role r : modRoleArray) {
-                        if (authorRoles.contains(r)) {
-                            isAdminOrMod = true;
-                        }
-                    }
-
-                    // Go through all the roles called admin, see if the author has it
-                    for (Role r : adminRoleArray) {
-                        if (authorRoles.contains(r)) {
-                            isAdminOrMod = true;
-                        }
-                    }
-
-                    if (isAdminOrMod) { // If they're an admin or mod, change thee prefix, and update 'prefix.txt'
-                        setPrefix(newPrefix);
-                        prefix = getPrefix();
-                        event.getChannel().sendMessage("Prefix changed to '" + prefix + "'");
-                        log("Prefix changed to " + prefix);
-                    } else { // Tell the user that thay don't have the permissions
-                        event.getChannel().sendMessage("You need to be an Admin or a Mod to access this command");
-                    }
-                } catch (Exception ex) { // In case it goes wrong
-                    event.getChannel().sendMessage("An exception occured! Prefix may not have been changed");
-                }
-            }
-
-            // Makes user a mod
-            else if (messageStrings[0].equals(prefix + "makemod")) {
-                log("Running makemod command");
-                boolean isAdmin = false;
-                List<Role> adminRoleArray = null;
-                List<Role> authorRoles = null;
-                List<Role> modRoleArray = null;
-
-                try { // Get the admin role, author roles, and the mod role
-                    adminRoleArray = server.getRolesByName("Admin");
-                    authorRoles = author.getRoles(server);
-                    modRoleArray = server.getRolesByName("Mod");
-
-                    // See if the user is an admin
-                    for (Role r : adminRoleArray) {
-                        if (authorRoles.contains(r)) {
-                            isAdmin = true;
-                        }
-                    }
-
-                    // Make sure the author hasn't menioned everyone
-                    if (!event.getMessage().mentionsEveryone()) {
-                        if (isAdmin) {
-                            List<User> users = event.getMessage().getMentionedUsers();
-                            for (User u : users) {
-                                for (Role r : modRoleArray) {
-                                    u.addRole(r);
-                                }
-                            }
-                            event.getChannel().sendMessage("Gave 'Mod' role to all users mentioned in message");
-                        } else {
-                            event.getChannel().sendMessage("You need to be an Admin to access this command");
-                        }
-                    } else {
-                        event.getChannel().sendMessage("Cannot make everyone a moderator!");
-                    }
-                } catch (Exception ex) {
-
-                }
-
+            } else {
+                event.getChannel().sendMessage("You're not going to believe this...\nIt's landed on it's edge");
             }
         }
 
-        else {
+        // government screw up command
+        else if (messageStrings[0].equals(prefix + "dayssincelastgovernmentscrewup")) {
+            log("Running government screwup command");
+            event.getChannel().sendMessage("Probably 0");
+        }
+
+        // Google command
+        else if (messageStrings[0].equals(prefix + "google")) {
+            log("Running google command");
+            // Replace spaces with '+' because that's how google does spaces
+            messageStrings[1] = messageStrings[1].replace(" ", "+");
+            log("Query = " + messageStrings[1]);
+            event.getChannel().sendMessage("http://www.google.com/search?q=" + messageStrings[1]);
+        }
+
+        // Meaning of life command (Fun command)
+        else if (messageStrings[0].equals(prefix + "whatisthemeaningoflife")) {
+            log("Running whatisthemeaningoflife command");
+            event.getChannel().sendMessage("The meaning of life is...");
+            event.getChannel().sendMessage("42");
+            // Totally not a douglas adams reference
+        }
+
+        // PickRandom
+        else if (messageStrings[0].equals(prefix + "pickrandom")) {
+            log("Running pickrandom command");
+            // Get the number of arguments, select a random one, send that back
+            int selection = rng.nextInt(messageStrings.length - 1);
+            selection++;
+            event.getChannel().sendMessage("Selected: " + messageStrings[selection]);
+        }
+
+        // Maths command
+        else if (messageStrings[0].equals(prefix + "domaths")) {
+            log("Running domaths command");
+            log("Expression = " + messageStrings[1]);
+            try {
+                // Command to execute python script
+                String cmd = "python3 /home/rhodso/Documents/GitHub/SLAD_Project/Java/UtilitiesBot/maths.py "
+                        + messageStrings[1];
+                Process p = Runtime.getRuntime().exec(cmd);
+
+                // Grab the return string
+                String str = "";
+                str = new String(p.getInputStream().readAllBytes());
+
+                // Catch if there was no output
+                if (str.equals(null) || str.equals("")) {
+                    str = "Unable to parse expression. Did you type it correctly?";
+                }
+
+                // Send answer or error message
+                log("Answer = " + str);
+                event.getChannel().sendMessage(str);
+            } catch (IOException ex) {
+                event.getChannel().sendMessage("An IOException occured");
+                System.out.println(ex.getCause());
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getStackTrace().toString());
+            }
+        }
+
+        // Change prefix command
+        else if (messageStrings[0].equals(prefix + "changeprefix")) {
+            log("Running changeprefix command");
+
+            // Some useful vars
+            String newPrefix = "";
+            List<Role> adminRoleArray = null;
+            List<Role> modRoleArray = null;
+            List<Role> authorRoles = null;
+
+            Boolean isAdminOrMod = false;
+
+            try {
+                // Get the admin, mod, and the roles the message author has
+                adminRoleArray = server.getRolesByName("Admin");
+                modRoleArray = server.getRolesByName("Mod");
+                authorRoles = author.getRoles(server);
+
+                // Get the new prefix
+                newPrefix = messageStrings[1];
+
+                // Go through all the roles called mod, see if the author has it
+                for (Role r : modRoleArray) {
+                    if (authorRoles.contains(r)) {
+                        isAdminOrMod = true;
+                    }
+                }
+
+                // Go through all the roles called admin, see if the author has it
+                for (Role r : adminRoleArray) {
+                    if (authorRoles.contains(r)) {
+                        isAdminOrMod = true;
+                    }
+                }
+
+                if (isAdminOrMod) { // If they're an admin or mod, change thee prefix, and update 'prefix.txt'
+                    setPrefix(newPrefix);
+                    prefix = getPrefix();
+                    event.getChannel().sendMessage("Prefix changed to '" + prefix + "'");
+                    log("Prefix changed to " + prefix);
+                } else { // Tell the user that thay don't have the permissions
+                    event.getChannel().sendMessage("You need to be an Admin or a Mod to access this command");
+                }
+            } catch (Exception ex) { // In case it goes wrong
+                event.getChannel().sendMessage("An exception occured! Prefix may not have been changed");
+            }
+        }
+
+        // Makes user a mod
+        else if (messageStrings[0].equals(prefix + "makemod")) {
+            log("Running makemod command");
+            boolean isAdmin = false;
+            List<Role> adminRoleArray = null;
+            List<Role> authorRoles = null;
+            List<Role> modRoleArray = null;
+
+            try { // Get the admin role, author roles, and the mod role
+                adminRoleArray = server.getRolesByName("Admin");
+                authorRoles = author.getRoles(server);
+                modRoleArray = server.getRolesByName("Mod");
+
+                // See if the user is an admin
+                for (Role r : adminRoleArray) {
+                    if (authorRoles.contains(r)) {
+                        isAdmin = true;
+                    }
+                }
+
+                // Make sure the author hasn't menioned everyone
+                if (!event.getMessage().mentionsEveryone()) {
+                    if (isAdmin) {
+                        List<User> users = event.getMessage().getMentionedUsers();
+                        for (User u : users) {
+                            for (Role r : modRoleArray) {
+                                u.addRole(r);
+                            }
+                        }
+                        event.getChannel().sendMessage("Gave 'Mod' role to all users mentioned in message");
+                    } else {
+                        event.getChannel().sendMessage("You need to be an Admin to access this command");
+                    }
+                } else {
+                    event.getChannel().sendMessage("Cannot make everyone a moderator!");
+                }
+            } catch (Exception ex) {
+
+            }
+
         }
     }
 
