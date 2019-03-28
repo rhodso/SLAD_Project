@@ -145,11 +145,11 @@ public class commands implements MessageCreateListener {
             else if (messageStrings[0].equals(prefix + "flipacoin")) {
                 log("Running flipacoin command");
                 int flip = rng.nextInt(101);
-                if (flip < 50) { //0-49 = Heads
+                if (flip < 50) { // 0-49 = Heads
                     event.getChannel().sendMessage("Heads");
-                } else if (flip > 50) { //51-100 = Tails
+                } else if (flip > 50) { // 51-100 = Tails
                     event.getChannel().sendMessage("Tails");
-                } else { //50 = Edge
+                } else { // 50 = Edge
                     event.getChannel().sendMessage("You're not going to believe this...\nIt's landed on it's edge");
                 }
             }
